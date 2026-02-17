@@ -1,12 +1,27 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useRef } from "react";
+import HeroSection from "@/components/HeroSection";
+import CalculatorSection from "@/components/CalculatorSection";
+import PositioningSection from "@/components/PositioningSection";
+import VideoBookingSection from "@/components/VideoBookingSection";
 
 const Index = () => {
+  const calculatorRef = useRef<HTMLDivElement>(null);
+  const positioningRef = useRef<HTMLDivElement>(null);
+
+  const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background text-foreground">
+      <HeroSection onCTAClick={() => scrollTo(calculatorRef)} />
+      <div ref={calculatorRef}>
+        <CalculatorSection onComplete={() => scrollTo(positioningRef)} />
       </div>
+      <div ref={positioningRef}>
+        <PositioningSection />
+      </div>
+      <VideoBookingSection />
     </div>
   );
 };
