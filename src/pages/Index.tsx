@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import nuvraLogo from "@/assets/nuvra-logo.png";
 
 const steps = [
   {
@@ -51,7 +52,6 @@ const Index = () => {
       setAnswers(newAnswers);
       setStep(step + 1);
     } else {
-      // Navigate to results page with data
       const params = new URLSearchParams({
         r: String(newAnswers[0]),
         e: String(newAnswers[1]),
@@ -66,38 +66,63 @@ const Index = () => {
   const isLast = step === steps.length - 1;
 
   return (
-    <div className="min-h-[100dvh] bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <div className="pt-8 pb-4 px-6 text-center">
-        <span className="text-xs font-body font-medium tracking-[0.2em] uppercase text-primary">
-          Nuvra Automation
+    <div className="min-h-[100dvh] bg-background text-foreground flex flex-col relative overflow-hidden">
+      {/* Ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full bg-gold-dark/[0.03] blur-[80px] pointer-events-none" />
+
+      {/* Header with logo */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="pt-6 pb-2 px-6 flex items-center justify-center gap-2.5"
+      >
+        <img src={nuvraLogo} alt="Nuvra" className="w-8 h-8 object-contain" />
+        <span className="text-sm font-body font-semibold tracking-[0.15em] uppercase text-gradient-gold">
+          Nuvra
         </span>
-      </div>
+      </motion.div>
 
       {/* Hero content - only on first step */}
       <AnimatePresence mode="wait">
         {step === 0 && (
           <motion.div
             key="hero"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="px-6 pt-4 pb-6 text-center"
+            exit={{ opacity: 0, y: -15, transition: { duration: 0.2 } }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="px-6 pt-6 pb-6 text-center"
           >
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4"
+            >
               Combien <span className="text-gradient-gold">perdez-vous</span> chaque mois ?
-            </h1>
-            <p className="font-body text-sm sm:text-base text-muted-foreground max-w-md mx-auto mb-6">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="font-body text-sm sm:text-base text-muted-foreground max-w-md mx-auto mb-6"
+            >
               La plupart des entreprises de services perdent entre 10 000$ et 40 000$/mois sans le savoir.
-            </p>
-            <div className="flex items-center justify-center gap-6 text-xs font-body text-muted-foreground">
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.55 }}
+              className="flex items-center justify-center gap-5 sm:gap-6 text-xs font-body text-muted-foreground"
+            >
               <span><span className="text-primary font-semibold">+40</span> entreprises</span>
-              <span className="w-px h-3 bg-border" />
+              <span className="w-px h-3 bg-primary/20" />
               <span><span className="text-primary font-semibold">+20%</span> conversions</span>
-              <span className="w-px h-3 bg-border" />
-              <span><span className="text-primary font-semibold">+10h</span>/semaine</span>
-            </div>
+              <span className="w-px h-3 bg-primary/20" />
+              <span><span className="text-primary font-semibold">+10h</span>/sem</span>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -107,22 +132,27 @@ const Index = () => {
         {/* Progress */}
         <div className="flex items-center gap-2 mb-8">
           {steps.map((_, i) => (
-            <div
+            <motion.div
               key={i}
-              className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-                i <= step ? "bg-primary" : "bg-secondary"
-              }`}
-            />
+              className="h-1 flex-1 rounded-full bg-secondary overflow-hidden"
+            >
+              <motion.div
+                className="h-full bg-primary rounded-full"
+                initial={{ width: "0%" }}
+                animate={{ width: i <= step ? "100%" : "0%" }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+              />
+            </motion.div>
           ))}
         </div>
 
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
           >
             <p className="text-xs font-body uppercase tracking-[0.15em] text-muted-foreground mb-2">
               {step + 1} / {steps.length}
@@ -132,21 +162,29 @@ const Index = () => {
             </h2>
 
             <div className="grid gap-3">
-              {current.options.map((opt) => (
-                <button
+              {current.options.map((opt, i) => (
+                <motion.button
                   key={opt.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.06 }}
                   onClick={() => handleSelect(opt.value)}
-                  className="w-full text-left px-5 py-4 rounded-xl border border-border bg-card font-body text-sm sm:text-base text-card-foreground hover:border-primary/50 active:scale-[0.98] transition-all duration-150"
+                  className="w-full text-left px-5 py-4 rounded-xl border border-border bg-card font-body text-sm sm:text-base text-card-foreground hover:border-primary/60 hover:glow-gold active:scale-[0.97] transition-all duration-200"
                 >
                   {opt.label}
-                </button>
+                </motion.button>
               ))}
             </div>
 
             {isLast && (
-              <p className="text-center text-xs text-muted-foreground mt-6 font-body">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-center text-xs text-primary/70 mt-6 font-body"
+              >
                 Cliquez pour voir vos résultats →
-              </p>
+              </motion.p>
             )}
           </motion.div>
         </AnimatePresence>
