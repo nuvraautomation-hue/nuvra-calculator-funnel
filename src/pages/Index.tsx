@@ -78,7 +78,7 @@ const Index = () => {
         transition={{ duration: 0.5 }}
         className="pt-6 pb-2 px-6 flex items-center justify-center gap-2.5"
       >
-        <img src={nuvraLogo} alt="Nuvra" className="w-8 h-8 object-contain" />
+        <img src={nuvraLogo} alt="Nuvra" className="w-12 h-12 object-contain" />
         <span className="text-sm font-body font-semibold tracking-[0.15em] uppercase text-gradient-gold">
           Nuvra
         </span>
