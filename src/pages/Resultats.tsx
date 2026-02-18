@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Phone, RefreshCw, CalendarCheck } from "lucide-react";
 import nuvraLogo from "@/assets/nuvra-logo.png";
 
@@ -47,16 +48,25 @@ const Resultats = () => {
 
   const result = calculateLoss(r, e, c, a);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const yOrb = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const scale1 = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.15, 1]);
+
   return (
-    <div className="min-h-[100dvh] bg-background text-foreground relative overflow-hidden">
-      {/* Layered ambient depth */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, hsl(38 76% 50% / 0.04) 0%, transparent 70%)' }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 80% 100%, hsl(34 85% 38% / 0.03) 0%, transparent 60%)' }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 20% 50%, hsl(0 0% 100% / 0.015) 0%, transparent 50%)' }} />
+    <div ref={containerRef} className="min-h-[100dvh] bg-background text-foreground relative overflow-hidden">
+      {/* Layered ambient depth with parallax */}
+      <motion.div className="absolute inset-0 pointer-events-none" style={{ y: y1, scale: scale1, background: 'radial-gradient(ellipse 80% 60% at 50% 0%, hsl(38 76% 50% / 0.04) 0%, transparent 70%)' }} />
+      <motion.div className="absolute inset-0 pointer-events-none" style={{ y: y2, background: 'radial-gradient(ellipse 60% 50% at 80% 100%, hsl(34 85% 38% / 0.03) 0%, transparent 60%)' }} />
+      <motion.div className="absolute inset-0 pointer-events-none" style={{ y: y3, background: 'radial-gradient(circle at 20% 50%, hsl(0 0% 100% / 0.015) 0%, transparent 50%)' }} />
       {/* Subtle noise texture */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
-      {/* Primary glow orb */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px] pointer-events-none" />
+      {/* Primary glow orb with parallax */}
+      <motion.div className="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px] pointer-events-none" style={{ y: yOrb }} />
 
       {/* Header */}
       <motion.div
