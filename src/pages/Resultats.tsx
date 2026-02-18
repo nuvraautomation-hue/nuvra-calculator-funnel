@@ -209,8 +209,7 @@ const Resultats = () => {
           <iframe
             src="https://link.nuvra-automation.com/widget/booking/TSKHG4iPAUloDCyxhAqH"
             className="w-full border-0"
-            style={{ height: "700px" }}
-            scrolling="no"
+            style={{ height: "1200px" }}
             title="Réservez votre diagnostic"
           />
         </motion.div>
