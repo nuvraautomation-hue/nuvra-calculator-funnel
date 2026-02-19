@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { Phone, RefreshCw, CalendarCheck } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { Phone, RefreshCw, CalendarCheck, X } from "lucide-react";
 import nuvraLogo from "@/assets/nuvra-logo.png";
 
 function calculateLoss(r: number, e: number, c: number, a: number) {
@@ -47,6 +47,12 @@ const Resultats = () => {
   const a = Number(params.get("a")) || 1;
 
   const result = calculateLoss(r, e, c, a);
+
+  const [showPopup, setShowPopup] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPopup(true), 25000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
@@ -250,6 +256,41 @@ const Resultats = () => {
           <span className="font-body text-[10px] text-muted-foreground">© {new Date().getFullYear()} Tous droits réservés.</span>
         </div>
       </footer>
+
+      {/* Popup formulaire après 25s */}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            onClick={() => setShowPopup(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", bounce: 0.25 }}
+              className="relative w-full max-w-lg bg-card border border-border rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowPopup(false)}
+                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20 transition-colors"
+              >
+                <X className="w-4 h-4 text-foreground" />
+              </button>
+              <iframe
+                src="https://link.nuvra-automation.com/widget/form/cKsZLqb3uaF3XkhajJoV?notrack=true"
+                className="w-full border-0"
+                style={{ height: "500px" }}
+                title="Formulaire Nuvra"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
