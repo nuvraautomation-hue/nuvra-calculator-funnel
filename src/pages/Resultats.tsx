@@ -306,27 +306,57 @@ const Resultats = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
             onClick={() => setShowPopup(false)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.92, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", bounce: 0.25 }}
-              className="relative w-full max-w-lg bg-card border border-border rounded-2xl overflow-hidden shadow-2xl"
+              exit={{ opacity: 0, scale: 0.92, y: 30 }}
+              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              className="relative w-full max-w-lg bg-card border border-primary/20 rounded-2xl overflow-hidden shadow-[0_0_60px_hsl(38_76%_50%/0.1)]"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Close button */}
               <button
                 onClick={() => setShowPopup(false)}
-                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted-foreground/20 transition-colors"
+                className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-background/80 border border-border flex items-center justify-center hover:border-primary/40 transition-colors"
               >
-                <X className="w-4 h-4 text-foreground" />
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
+
+              {/* Premium header */}
+              <div className="relative px-6 pt-6 pb-4 border-b border-border bg-gradient-to-b from-primary/[0.06] to-transparent">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <img src={nuvraLogo} alt="Nuvra" className="w-8 h-8 object-contain" />
+                  <span className="text-xs font-body font-semibold tracking-[0.12em] uppercase text-gradient-gold">
+                    Nuvra
+                  </span>
+                </div>
+                <h3 className="font-display text-lg sm:text-xl font-bold leading-tight mb-1.5">
+                  Ne partez pas sans votre <span className="text-gradient-gold">diagnostic gratuit</span>
+                </h3>
+                <p className="font-body text-xs text-muted-foreground leading-relaxed">
+                  Recevez une analyse personnalisée de vos pertes et un plan d'action concret.
+                </p>
+                <div className="flex items-center gap-3 mt-3">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-body text-primary/70">
+                    <CheckCircle2 className="w-3 h-3" /> 100% gratuit
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-body text-primary/70">
+                    <CheckCircle2 className="w-3 h-3" /> Sans engagement
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-body text-primary/70">
+                    <CheckCircle2 className="w-3 h-3" /> Confidentiel
+                  </span>
+                </div>
+              </div>
+
+              {/* Form iframe */}
               <iframe
                 src="https://link.nuvra-automation.com/widget/form/cKsZLqb3uaF3XkhajJoV?notrack=true"
                 className="w-full border-0"
-                style={{ height: "500px" }}
+                style={{ height: "420px" }}
                 title="Formulaire Nuvra"
               />
             </motion.div>
