@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { Phone, RefreshCw, CalendarCheck, X } from "lucide-react";
+import { Phone, RefreshCw, CalendarCheck, X, ArrowRight, CheckCircle2 } from "lucide-react";
 import nuvraLogo from "@/assets/nuvra-logo.png";
 
 function calculateLoss(r: number, e: number, c: number, a: number) {
@@ -27,9 +27,9 @@ const causes = [
 ];
 
 const pillars = [
-  { n: "01", title: "Réceptionniste IA 24/7", desc: "Répond, qualifie et planifie — même la nuit." },
-  { n: "02", title: "Suivi automatisé", desc: "Relances SMS, email et voix au bon moment." },
-  { n: "03", title: "Prise de rendez-vous optimisée", desc: "Réservation en ligne et confirmation automatique." },
+  { n: "01", title: "Réceptionniste IA 24/7", desc: "Répond, qualifie et planifie — même la nuit.", benefit: "Ne manquez plus aucun appel" },
+  { n: "02", title: "Suivi automatisé", desc: "Relances SMS, email et voix au bon moment.", benefit: "Convertissez plus de prospects" },
+  { n: "03", title: "Prise de rendez-vous optimisée", desc: "Réservation en ligne et confirmation automatique.", benefit: "Gagnez 10h+ par semaine" },
 ];
 
 const fadeUp = (delay = 0) => ({
@@ -38,6 +38,24 @@ const fadeUp = (delay = 0) => ({
   viewport: { once: true },
   transition: { duration: 0.5, delay },
 });
+
+// Animated counter component
+const AnimatedNumber = ({ value }: { value: number }) => {
+  const [displayed, setDisplayed] = useState(0);
+  useEffect(() => {
+    const duration = 1500;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayed(Math.round(value * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [value]);
+  return <>{fmt(displayed)}</>;
+};
 
 const Resultats = () => {
   const [params] = useSearchParams();
@@ -63,15 +81,17 @@ const Resultats = () => {
   const yOrb = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const scale1 = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.15, 1]);
 
+  const scrollToCalendar = () => {
+    document.getElementById("calendar-section")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div ref={containerRef} className="min-h-[100dvh] bg-background text-foreground relative overflow-hidden">
       {/* Layered ambient depth with parallax */}
       <motion.div className="absolute inset-0 pointer-events-none" style={{ y: y1, scale: scale1, background: 'radial-gradient(ellipse 80% 60% at 50% 0%, hsl(38 76% 50% / 0.04) 0%, transparent 70%)' }} />
       <motion.div className="absolute inset-0 pointer-events-none" style={{ y: y2, background: 'radial-gradient(ellipse 60% 50% at 80% 100%, hsl(34 85% 38% / 0.03) 0%, transparent 60%)' }} />
       <motion.div className="absolute inset-0 pointer-events-none" style={{ y: y3, background: 'radial-gradient(circle at 20% 50%, hsl(0 0% 100% / 0.015) 0%, transparent 50%)' }} />
-      {/* Subtle noise texture */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")', backgroundRepeat: 'repeat', backgroundSize: '128px 128px' }} />
-      {/* Primary glow orb with parallax */}
       <motion.div className="absolute top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[120px] pointer-events-none" style={{ y: yOrb }} />
 
       {/* Header */}
@@ -89,8 +109,8 @@ const Resultats = () => {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
 
-        {/* Result */}
-        <section className="py-6 md:py-10 text-center">
+        {/* Result Hero */}
+        <section className="py-8 md:py-12 text-center">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -106,23 +126,35 @@ const Resultats = () => {
             transition={{ duration: 0.8, delay: 0.2, type: "spring", bounce: 0.3 }}
             className="mb-3"
           >
-            <span className="font-display text-4xl sm:text-5xl md:text-7xl font-bold text-gradient-gold">
-              {fmt(result.total)}
+            <span className="font-display text-5xl sm:text-6xl md:text-7xl font-bold text-gradient-gold">
+              <AnimatedNumber value={result.total} />
             </span>
-            <span className="block text-muted-foreground font-body text-sm mt-1.5">par mois</span>
+            <span className="block text-muted-foreground font-body text-sm mt-1.5">par mois — soit <span className="text-foreground font-semibold">{fmt(result.total * 12)}</span> par an</span>
           </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="font-body text-sm text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed"
+            className="font-body text-sm text-muted-foreground max-w-sm mx-auto mb-8 leading-relaxed"
           >
             Opportunités manquées liées aux appels non traités, suivis inexistants et tâches manuelles.
           </motion.p>
 
-          {/* Breakdown - horizontal on desktop */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 mb-8 md:mb-10 text-left max-w-2xl mx-auto">
+          {/* CTA button */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            onClick={scrollToCalendar}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-body font-semibold text-sm hover:brightness-110 active:scale-[0.97] transition-all duration-200 glow-gold mb-8"
+          >
+            Récupérer ces revenus
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
+
+          {/* Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 text-left max-w-2xl mx-auto">
             {[
               { label: "Opportunités perdues", value: result.opportunities },
               { label: "Temps improductif", value: result.time },
@@ -132,7 +164,7 @@ const Resultats = () => {
                 key={item.label}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 + i * 0.1 }}
+                transition={{ delay: 0.8 + i * 0.1 }}
                 className="flex items-center justify-between md:flex-col md:items-center md:text-center gap-2 px-4 py-3 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors"
               >
                 <span className="font-body text-xs text-muted-foreground">{item.label}</span>
@@ -144,8 +176,8 @@ const Resultats = () => {
 
         <div className="h-px w-16 mx-auto line-gold opacity-30" />
 
-        {/* Causes + Pitch side by side on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 py-6 md:py-12">
+        {/* Causes + Pitch side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 py-8 md:py-12">
           {/* 3 Causes */}
           <div>
             <motion.h2 {...fadeUp()} className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left mb-4 md:mb-6">
@@ -191,7 +223,11 @@ const Resultats = () => {
                   <span className="font-display text-lg font-bold text-primary/40 shrink-0">{p.n}</span>
                   <div>
                     <h3 className="font-display text-sm font-semibold mb-0.5">{p.title}</h3>
-                    <p className="font-body text-xs text-muted-foreground">{p.desc}</p>
+                    <p className="font-body text-xs text-muted-foreground mb-1.5">{p.desc}</p>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-body text-primary/80">
+                      <CheckCircle2 className="w-3 h-3" />
+                      {p.benefit}
+                    </span>
                   </div>
                 </motion.div>
               ))}
@@ -201,13 +237,16 @@ const Resultats = () => {
 
         <div className="h-px w-16 mx-auto line-gold opacity-30" />
 
-        {/* Video + Calendar side by side on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 py-6 md:py-12">
+        {/* Video + Calendar */}
+        <div id="calendar-section" className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 py-8 md:py-12">
           {/* Video */}
           <div>
-            <motion.h2 {...fadeUp()} className="font-display text-xl sm:text-2xl font-bold text-center md:text-left mb-4">
+            <motion.h2 {...fadeUp()} className="font-display text-xl sm:text-2xl font-bold text-center md:text-left mb-2">
               Analysons vos fuites
             </motion.h2>
+            <motion.p {...fadeUp(0.05)} className="font-body text-xs text-muted-foreground text-center md:text-left mb-4">
+              Découvrez en 2 minutes comment nous aidons les entreprises comme la vôtre.
+            </motion.p>
             <motion.div {...fadeUp(0.1)} className="relative aspect-video rounded-xl border border-border bg-card overflow-hidden">
               <video
                 className="w-full h-full object-cover"
@@ -229,8 +268,11 @@ const Resultats = () => {
               <h2 className="font-display text-xl sm:text-2xl font-bold mb-2">
                 Réservez votre diagnostic
               </h2>
-              <p className="font-body text-sm text-muted-foreground mb-4">
-                Cet appel est un diagnostic stratégique. <span className="text-foreground">Aucune obligation.</span>
+              <p className="font-body text-sm text-muted-foreground mb-1">
+                Cet appel est un diagnostic stratégique. <span className="text-foreground font-semibold">Aucune obligation.</span>
+              </p>
+              <p className="font-body text-[10px] text-primary/60 mb-4">
+                ✓ Gratuit · ✓ 15 min · ✓ Plan d'action personnalisé
               </p>
             </motion.div>
 
