@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/nuvra-calculator-funnel/", // 🔥 IMPORTANT POUR GITHUB PAGES
+  base: "/",
 
   server: {
     host: "::",
@@ -15,10 +15,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
 
-  plugins: [
-    react(),
-    mode === "development" && componentTagger(),
-  ].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
 
   resolve: {
     alias: {
